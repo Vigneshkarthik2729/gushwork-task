@@ -41,14 +41,6 @@
       src: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&auto=format&fit=crop',
       alt: 'Industrial pipeline installation overhead view'
     },
-    {
-      src: 'https://images.unsplash.com/photo-1565117879800-1b56f51ddfe3?w=900&auto=format&fit=crop',
-      alt: 'Water infrastructure project in progress'
-    },
-    {
-      src: 'https://images.unsplash.com/photo-1581094480808-93c5e83f4a0c?w=900&auto=format&fit=crop',
-      alt: 'Close-up of HDPE pipe fittings'
-    }
   ];
 
   
@@ -67,31 +59,31 @@
   mainImg.style.transition = 'opacity 0.25s ease, transform 0.3s ease';
 
   
-  images.forEach(function (imgData, i) {
-    const thumb = document.createElement('div');
-    thumb.className    = 'hero__thumb' + (i === 0 ? ' active' : '');
-    thumb.setAttribute('role', 'listitem');
-    thumb.setAttribute('tabindex', '0');
-    thumb.setAttribute('aria-label', 'View product image ' + (i + 1));
+  // images.forEach(function (imgData, i) {
+  //   const thumb = document.createElement('div');
+  //   thumb.className    = 'hero__thumb' + (i === 0 ? ' active' : '');
+  //   thumb.setAttribute('role', 'listitem');
+  //   thumb.setAttribute('tabindex', '0');
+  //   thumb.setAttribute('aria-label', 'View product image ' + (i + 1));
 
-    const img    = document.createElement('img');
-    img.src      = imgData.src;
-    img.alt      = imgData.alt;
-    img.loading  = 'lazy';
+  //   const img    = document.createElement('img');
+  //   img.src      = imgData.src;
+  //   img.alt      = imgData.alt;
+  //   img.loading  = 'lazy';
 
-    thumb.appendChild(img);
+  //   thumb.appendChild(img);
 
-    thumb.addEventListener('click', function () { goTo(i); });
+  //   thumb.addEventListener('click', function () { goTo(i); });
 
-    thumb.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        goTo(i);
-      }
-    });
+  //   thumb.addEventListener('keydown', function (e) {
+  //     if (e.key === 'Enter' || e.key === ' ') {
+  //       e.preventDefault();
+  //       goTo(i);
+  //     }
+  //   });
 
-    thumbsRow.appendChild(thumb);
-  });
+  //   thumbsRow.appendChild(thumb);
+  // });
 
   
   function goTo(index) {
@@ -169,40 +161,6 @@
   'use strict';
 
   
-  var downloadBtn = document.getElementById('downloadBtn');
-
-  if (downloadBtn) {
-
-    downloadBtn.addEventListener('click', function () {
-
-      
-      if (downloadBtn.classList.contains('loading')) return;
-
-      
-      var originalHTML = downloadBtn.innerHTML;
-
-      
-      downloadBtn.classList.add('loading');
-      downloadBtn.innerHTML =
-        '<svg class="spin" viewBox="0 0 24 24" aria-hidden="true" ' +
-        'style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2">' +
-        '<circle cx="12" cy="12" r="9" stroke-dasharray="28" stroke-dashoffset="8"/>' +
-        '</svg>' +
-        ' Preparing Datasheet\u2026';
-
-      
-
-      
-      setTimeout(function () {
-        downloadBtn.classList.remove('loading');
-        downloadBtn.innerHTML = originalHTML;
-      }, 1800);
-
-    });
-
-  }
-
-
   
   var rows = document.querySelectorAll('.specs-table__row');
 
@@ -1051,7 +1009,7 @@
   var quoteModal = document.getElementById('quoteModal');
   var modalCloseBtn = document.getElementById('modalCloseBtn');
   var quoteOverlay = document.getElementById('quoteOverlay');
-  var quoteButtons = document.querySelectorAll('#quoteBtn, .btn-primary');
+  var quoteButtons = document.querySelectorAll('.btn-primary');
   var quoteForm = document.getElementById('quoteForm');
 
   function openQuoteModal() {
@@ -1102,6 +1060,77 @@
         }
         quoteForm.reset();
         closeQuoteModal();
+      }, 1200);
+    });
+  }
+
+  /* ───────────────────────────────────────────────────────── */
+  /* MODAL-2: Request Datasheet Modal */
+  /* ───────────────────────────────────────────────────────── */
+
+  var modal2 = document.getElementById('modal2');
+  var modal2CloseBtn = document.getElementById('modal2CloseBtn');
+  var modal2Overlay = document.getElementById('modal2Overlay');
+  var modal2Form = document.getElementById('modal2Form');
+  var downloadBtn = document.getElementById('downloadBtn');
+  var quoteBtn = document.getElementById('quoteBtn');
+
+  function openModal2() {
+    if (!modal2) return;
+    modal2.classList.add('open');
+    modal2.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    var firstInput = modal2.querySelector('input');
+    if (firstInput) firstInput.focus();
+  }
+
+  function closeModal2() {
+    if (!modal2) return;
+    modal2.classList.remove('open');
+    modal2.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  /* Attach click handlers to both buttons */
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      openModal2();
+    });
+  }
+
+  if (quoteBtn) {
+    quoteBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      openModal2();
+    });
+  }
+
+  if (modal2CloseBtn) modal2CloseBtn.addEventListener('click', closeModal2);
+  if (modal2Overlay) modal2Overlay.addEventListener('click', closeModal2);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && modal2 && modal2.classList.contains('open')) {
+      closeModal2();
+    }
+  });
+
+  if (modal2Form) {
+    modal2Form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var submit = modal2Form.querySelector('button[type="submit"]');
+      if (submit) {
+        submit.textContent = 'Downloading…';
+        submit.disabled = true;
+      }
+
+      setTimeout(function () {
+        if (submit) {
+          submit.textContent = 'Download Started!';
+          submit.disabled = false;
+        }
+        modal2Form.reset();
+        closeModal2();
       }, 1200);
     });
   }
