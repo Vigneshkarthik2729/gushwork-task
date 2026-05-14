@@ -1,21 +1,7 @@
-/* ============================================================
-   STICKY ANNOUNCEMENT HEADER + CAROUSEL ZOOM
-   Add this JS to the bottom of your script.js (or include as
-   a separate <script> before </body>)
-   ============================================================ */
-
-/* ----------------------------------------------------------
-   1. STICKY ANNOUNCEMENT HEADER
-   ----------------------------------------------------------
-   Behaviour:
-   • Appears (slides down) once user scrolls past the hero fold
-   • Disappears (slides up) when user scrolls back near the top
-   • "×" button permanently dismisses for the session
-   ---------------------------------------------------------- */
 (function initStickyAnnouncement() {
   'use strict';
 
-  /* ── Inject the HTML banner ────────────────────────────── */
+
   var banner = document.createElement('div');
   banner.className = 'sticky-announcement';
   banner.setAttribute('role', 'banner');
@@ -34,20 +20,19 @@
   /* Insert as the very first child of <body> */
   document.body.insertBefore(banner, document.body.firstChild);
 
-  /* ── State ─────────────────────────────────────────────── */
+  
   var dismissed    = false;
   var isVisible    = false;
   var lastScrollY  = window.scrollY || window.pageYOffset;
   var navbar       = document.querySelector('.navbar');
 
-  /* Height of the announcement bar (set after first paint) */
+  
   var BANNER_H = 0;
   function measureBanner() {
     BANNER_H = banner.getBoundingClientRect().height || 40;
   }
   requestAnimationFrame(measureBanner);
 
-  /* ── Show / hide helpers ───────────────────────────────── */
   function showBanner() {
     if (dismissed || isVisible) return;
     isVisible = true;
@@ -66,7 +51,6 @@
     if (navbar) navbar.style.top = '0';
   }
 
-  /* ── Scroll logic ──────────────────────────────────────── */
   var TRIGGER_PX = 0; /* px from top – set after layout */
 
   function setTrigger() {
@@ -105,7 +89,6 @@
 
   window.addEventListener('scroll', onScroll, { passive: true });
 
-  /* ── Dismiss button ────────────────────────────────────── */
   var closeBtn = banner.querySelector('.sticky-announcement__close');
   if (closeBtn) {
     closeBtn.addEventListener('click', function () {
@@ -119,7 +102,7 @@
     });
   }
 
-  /* ── CTA link inside banner ────────────────────────────── */
+  
   var ctaLink = banner.querySelector('.sticky-announcement__link');
   if (ctaLink) {
     ctaLink.addEventListener('click', function () {
@@ -134,15 +117,6 @@
 })();
 
 
-/* ----------------------------------------------------------
-   2. CAROUSEL IMAGE ZOOM ON HOVER
-   ----------------------------------------------------------
-   Behaviour:
-   • Hovering over the main carousel image shows a zoom overlay
-   • The overlay displays a magnified (2.5×) version of the image
-   • A lens indicator follows the mouse within the main image
-   • Works with the auto-playing carousel (updates on image change)
-   ---------------------------------------------------------- */
 (function initCarouselZoom() {
   'use strict';
 
@@ -153,7 +127,6 @@
 
   var ZOOM_FACTOR = 2.5; /* magnification level */
 
-  /* ── Create zoom overlay ──────────────────────────────── */
   var zoomOverlay = document.createElement('div');
   zoomOverlay.className = 'hero__zoom-overlay';
   zoomOverlay.setAttribute('aria-hidden', 'true');
@@ -163,23 +136,19 @@
   zoomImg.setAttribute('aria-hidden', 'true');
   zoomOverlay.appendChild(zoomImg);
 
-  /* ── Create lens ──────────────────────────────────────── */
   var lens = document.createElement('div');
   lens.className = 'hero__zoom-lens';
   lens.setAttribute('aria-hidden', 'true');
 
-  /* ── Create badge ─────────────────────────────────────── */
   var badge = document.createElement('div');
   badge.className   = 'hero__zoom-badge';
   badge.textContent = '🔍 Hover to zoom';
   badge.setAttribute('aria-hidden', 'true');
 
-  /* ── Append to wrapper ────────────────────────────────── */
   mainImgWrap.appendChild(zoomOverlay);
   mainImgWrap.appendChild(lens);
   mainImgWrap.appendChild(badge);
 
-  /* ── Sync zoom image src with carousel ────────────────── */
   function syncZoomSrc() {
     if (mainImg.src && zoomImg.src !== mainImg.src) {
       zoomImg.src = mainImg.src;
@@ -193,7 +162,6 @@
   /* Initial sync */
   syncZoomSrc();
 
-  /* ── Mouse enter / leave ──────────────────────────────── */
   mainImgWrap.addEventListener('mouseenter', function () {
     syncZoomSrc();
     zoomOverlay.classList.add('is-active');
@@ -205,7 +173,6 @@
     lens.classList.remove('is-active');
   });
 
-  /* ── Mouse move – update lens position + zoom pan ──────── */
   mainImgWrap.addEventListener('mousemove', function (e) {
     var rect   = mainImgWrap.getBoundingClientRect();
 
@@ -217,7 +184,6 @@
     relX = Math.max(0, Math.min(1, relX));
     relY = Math.max(0, Math.min(1, relY));
 
-    /* ── Move the lens ──────────────────────────────────── */
     var lensW  = lens.offsetWidth  || 80;
     var lensH  = lens.offsetHeight || 80;
 
@@ -231,9 +197,6 @@
     lens.style.left = lensX + 'px';
     lens.style.top  = lensY + 'px';
 
-    /* ── Pan the zoomed image ───────────────────────────── */
-    /* At zoom 2.5×, the image is 2.5× larger than the overlay.
-       We shift the image so the portion under the lens is centred. */
     var zoomW = zoomOverlay.offsetWidth  || 280;
     var zoomH = zoomOverlay.offsetHeight || 280;
 
@@ -253,11 +216,9 @@
     zoomImg.style.marginLeft      = '-' + shiftX + 'px';
     zoomImg.style.marginTop       = '-' + shiftY + 'px';
 
-    /* Hide badge once user starts moving mouse */
     badge.style.opacity = '0';
   });
 
-  /* Show badge hint again briefly on mouseenter */
   mainImgWrap.addEventListener('mouseenter', function () {
     badge.style.opacity = '1';
     badge.style.transition = 'opacity 0.22s ease';
@@ -267,7 +228,6 @@
     }, 1400);
   });
 
-  /* ── Touch: disable zoom on touch devices ─────────────── */
   mainImgWrap.addEventListener('touchstart', function () {
     zoomOverlay.classList.remove('is-active');
     lens.classList.remove('is-active');
